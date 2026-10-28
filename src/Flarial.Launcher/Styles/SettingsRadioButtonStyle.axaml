@@ -1,0 +1,76 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ONYX sidebar nav item (the options mock's .nav): a translucent parallelogram
+         outline around a dark parallelogram; checked inverts to solid white with black text.
+         The icon rides in Tag as a <Template> (set in SettingsView), like the original style. -->
+    <Style Selector="RadioButton.SettingsRadioButton">
+        <Setter Property="Height" Value="38"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Grid.Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="LetterSpacing" Value="1.6"/>
+                            </Style>
+                        </Grid.Styles>
+                        <Path Name="NavOuter" Stretch="Fill" Fill="#66FFFFFF"
+                              Data="M12,0 H100 L88,38 H0 Z">
+                            <Path.Transitions>
+                                <Transitions>
+                                    <BrushTransition Property="Fill" Duration="0:0:0.18"/>
+                                </Transitions>
+                            </Path.Transitions>
+                        </Path>
+                        <Path Name="NavInner" Stretch="Fill" Margin="1.5,1,1.5,1" Fill="#D6000000"
+                              Data="M11,0 H89 L78,36 H0 Z">
+                            <Path.Transitions>
+                                <Transitions>
+                                    <BrushTransition Property="Fill" Duration="0:0:0.18"/>
+                                </Transitions>
+                            </Path.Transitions>
+                        </Path>
+                        <StackPanel Orientation="Horizontal" Margin="26,0" Spacing="11"
+                                    VerticalAlignment="Center" IsHitTestVisible="False">
+                            <Border Name="NavIconBox" Width="24" Height="24" CornerRadius="2.5" Background="#24FFFFFF">
+                                <Border.Transitions>
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.18"/>
+                                    </Transitions>
+                                </Border.Transitions>
+                                <ContentControl Content="{TemplateBinding Tag}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="RadioButton.SettingsRadioButton:pointerover /template/ Path#NavInner">
+        <Setter Property="Fill" Value="#2EFFFFFF"/>
+    </Style>
+    <Style Selector="RadioButton.SettingsRadioButton:checked">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    <Style Selector="RadioButton.SettingsRadioButton:checked /template/ TextBlock">
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+    <Style Selector="RadioButton.SettingsRadioButton:checked /template/ Path#NavOuter">
+        <Setter Property="Fill" Value="White"/>
+    </Style>
+    <Style Selector="RadioButton.SettingsRadioButton:checked /template/ Path#NavInner">
+        <Setter Property="Fill" Value="White"/>
+    </Style>
+    <Style Selector="RadioButton.SettingsRadioButton:checked /template/ Border#NavIconBox">
+        <Setter Property="Background" Value="Black"/>
+    </Style>
+
+</Styles>

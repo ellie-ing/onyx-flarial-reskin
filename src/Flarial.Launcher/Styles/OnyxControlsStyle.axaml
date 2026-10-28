@@ -1,0 +1,117 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="using:Avalonia.Data.Converters">
+
+    <!-- ONYX parallelogram button (the options mock's .btn):
+         slanted shape, translucent white at rest, inverts to solid white on hover.
+         An optional icon can be supplied through Tag as a <Template> (same trick as VersionItemView). -->
+    <Style Selector="Button.OnyxButton">
+        <Setter Property="Background" Value="#29FFFFFF"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="10.5"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="MinWidth" Value="97"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="RenderTransform" Value="translateX(0px)"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.18"/>
+                <BrushTransition Property="Foreground" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <Grid.Styles>
+                        <Style Selector="TextBlock">
+                            <Setter Property="LetterSpacing" Value="1.8"/>
+                        </Style>
+                    </Grid.Styles>
+                    <Path Name="BtnShape" Stretch="Fill" Fill="{TemplateBinding Background}"
+                          Data="M9,0 H100 L91,25 H0 Z">
+                        <Path.Transitions>
+                            <Transitions>
+                                <BrushTransition Property="Fill" Duration="0:0:0.15"/>
+                            </Transitions>
+                        </Path.Transitions>
+                    </Path>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Spacing="6" Margin="14,0" IsHitTestVisible="False">
+                        <Viewbox Width="13" Height="13" VerticalAlignment="Center"
+                                 IsVisible="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static converters:ObjectConverters.IsNotNull}}">
+                            <ContentControl Content="{TemplateBinding Tag}"/>
+                        </Viewbox>
+                        <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="Button.OnyxButton:pointerover">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="RenderTransform" Value="translateX(4px)"/>
+    </Style>
+    <Style Selector="Button.OnyxButton:pointerover /template/ Path#BtnShape">
+        <Setter Property="Fill" Value="White"/>
+    </Style>
+    <Style Selector="Button.OnyxButton:pressed /template/ Path#BtnShape">
+        <Setter Property="Fill" Value="#D9FFFFFF"/>
+    </Style>
+    <Style Selector="Button.OnyxButton:disabled">
+        <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+    <Style Selector="Button.OnyxButton.wide">
+        <Setter Property="Height" Value="34"/>
+    </Style>
+    <!-- hi: the mock's inverted call-to-action (solid white, black text) -->
+    <Style Selector="Button.OnyxButton.hi">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+
+    <!-- ONYX parallelogram switch (the mock's .sw): dark track, pale thumb;
+         checked -> white track, black thumb slid right. -->
+    <Style Selector="ToggleButton.OnyxSwitch">
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Width="40" Height="20">
+                    <Path Name="SwTrack" Stretch="Fill" Fill="#66FFFFFF"
+                          Data="M7,0 H40 L33,20 H0 Z"/>
+                    <Path Name="SwInner" Stretch="Fill" Margin="1.5,1,2,1" Fill="#0A0A0A"
+                          Data="M6,0 H34 L28,18 H0 Z">
+                        <Path.Transitions>
+                            <Transitions>
+                                <BrushTransition Property="Fill" Duration="0:0:0.2"/>
+                            </Transitions>
+                        </Path.Transitions>
+                    </Path>
+                    <Path Name="SwThumb" Width="12" Height="13" HorizontalAlignment="Left" VerticalAlignment="Center"
+                          Margin="7,0,0,0" Fill="#B3FFFFFF"
+                          Data="M4,0 H12 L8,13 H0 Z">
+                        <Path.Transitions>
+                            <Transitions>
+                                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.28" Easing="CubicEaseOut"/>
+                                <BrushTransition Property="Fill" Duration="0:0:0.2"/>
+                            </Transitions>
+                        </Path.Transitions>
+                    </Path>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ToggleButton.OnyxSwitch:checked /template/ Path#SwInner">
+        <Setter Property="Fill" Value="White"/>
+    </Style>
+    <Style Selector="ToggleButton.OnyxSwitch:checked /template/ Path#SwThumb">
+        <Setter Property="Fill" Value="Black"/>
+        <Setter Property="RenderTransform" Value="translateX(17px)"/>
+    </Style>
+    <Style Selector="ToggleButton.OnyxSwitch:pointerover /template/ Path#SwTrack">
+        <Setter Property="Fill" Value="#80FFFFFF"/>
+    </Style>
+
+</Styles>
