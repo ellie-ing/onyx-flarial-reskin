@@ -1,0 +1,936 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Flarial.Launcher.ViewModels"
+             xmlns:types="clr-namespace:Flarial.Launcher.Types"
+             xmlns:controls="clr-namespace:Flarial.Launcher.Controls.ToolTip"
+             xmlns:gif="using:Avalonia.Labs.Gif"
+             xmlns:converters="clr-namespace:Flarial.Launcher.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Flarial.Launcher.Views.HomeView"
+             x:DataType="vm:HomeViewModel"
+             BorderThickness="{StaticResource ButtonBorderThickness}"
+             BorderBrush="{StaticResource BackgroundBorderColor}"
+             CornerRadius="25"
+             Width="800" Height="500">
+    <UserControl.Styles>
+        <Style Selector="Grid#LaunchWrap">
+            <Setter Property="RenderTransform" Value="translateX(0px)"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Grid#LaunchWrap:pointerover">
+            <Setter Property="RenderTransform" Value="translateX(7px)"/>
+        </Style>
+        <Style Selector="Grid#LaunchWrap:pointerover Path#LaunchGlow">
+            <Setter Property="Opacity" Value="0.75"/>
+            <Setter Property="RenderTransform" Value="scale(1.07)"/>
+        </Style>
+        <Style Selector="Path#LaunchGlow">
+            <Setter Property="Opacity" Value="0.35"/>
+            <Setter Property="RenderTransform" Value="scale(1)"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Path#LaunchGlow.launching">
+            <Setter Property="Opacity" Value="0"/>
+        </Style>
+    </UserControl.Styles>
+    <Grid>
+        <Border IsHitTestVisible="False" Name="MainBorder" Background="{StaticResource BackgroundColor}" CornerRadius="25">
+            <Grid>
+
+                <gif:GifImage x:Name="BackgroundGif" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill"/>
+
+                <!-- left-to-right scrim so the text side stays readable -->
+                <Border>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                            <GradientStop Color="#E6000000" Offset="0"/>
+                            <GradientStop Color="#B3000000" Offset="0.38"/>
+                            <GradientStop Color="#26000000" Offset="0.7"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <!-- vignette -->
+                <Border>
+                    <Border.Background>
+                        <RadialGradientBrush Center="55%,50%" GradientOrigin="55%,50%" RadiusX="0.95" RadiusY="0.95">
+                            <GradientStop Color="#00000000" Offset="0.55"/>
+                            <GradientStop Color="#CC000000" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <!-- halftone dots, left side only -->
+                <Border Width="480" HorizontalAlignment="Left">
+                    <Border.Background>
+                        <DrawingBrush TileMode="Tile" DestinationRect="0,0,6,6">
+                            <DrawingBrush.Drawing>
+                                <GeometryDrawing Brush="#21FFFFFF">
+                                    <GeometryDrawing.Geometry>
+                                        <EllipseGeometry Center="3,3" RadiusX="0.8" RadiusY="0.8"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Border.Background>
+                    <Border.OpacityMask>
+                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                            <GradientStop Color="#FF000000" Offset="0"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.OpacityMask>
+                </Border>
+
+                <!-- scanlines -->
+                <Border>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,0.6%" SpreadMethod="Repeat">
+                            <GradientStop Color="#0BFFFFFF" Offset="0"/>
+                            <GradientStop Color="#0BFFFFFF" Offset="0.33"/>
+                            <GradientStop Color="#00000000" Offset="0.34"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <!-- scan beam -->
+                <Border Height="133" VerticalAlignment="Top">
+                    <Border.RenderTransform>
+                        <TranslateTransform Y="-140"/>
+                    </Border.RenderTransform>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="50%,0%" EndPoint="50%,100%">
+                            <GradientStop Color="#00FFFFFF" Offset="0"/>
+                            <GradientStop Color="#14FFFFFF" Offset="0.5"/>
+                            <GradientStop Color="#00FFFFFF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Style.Animations>
+                                <Animation Duration="0:0:7" IterationCount="INFINITE">
+                                    <KeyFrame Cue="0%">
+                                        <Setter Property="(TranslateTransform.Y)" Value="-140"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="100%">
+                                        <Setter Property="(TranslateTransform.Y)" Value="520"/>
+                                    </KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </Border.Styles>
+                </Border>
+
+                <!-- glitch tear band -->
+                <Border Height="18" VerticalAlignment="Top" Background="#4DFFFFFF" Opacity="0">
+                    <Border.RenderTransform>
+                        <TranslateTransform/>
+                    </Border.RenderTransform>
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Style.Animations>
+                                <Animation Duration="0:0:2.6" IterationCount="INFINITE">
+                                    <KeyFrame Cue="0%">
+                                        <Setter Property="Opacity" Value="0"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="38%">
+                                        <Setter Property="Opacity" Value="0"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="39%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="130"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="42%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="315"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="45%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="70"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="47%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="220"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="50%">
+                                        <Setter Property="Opacity" Value="0"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="78%">
+                                        <Setter Property="Opacity" Value="0"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="79%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="250"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="82%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="370"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="85%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="155"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="88%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="290"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="91%">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="(TranslateTransform.Y)" Value="100"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="94%">
+                                        <Setter Property="Opacity" Value="0"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="100%">
+                                        <Setter Property="Opacity" Value="0"/>
+                                    </KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </Border.Styles>
+                </Border>
+
+                <!-- vertical welcome kana: a shine pulse travels down the glyphs -->
+                <StackPanel Margin="22,158,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <TextBlock Text="よ" FontFamily="{StaticResource DelaGothic}" FontSize="17" Foreground="#A6FFFFFF">
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:3.4" IterationCount="INFINITE" Delay="0:0:0">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="16%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#FFFFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="34%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    <TextBlock Text="う" FontFamily="{StaticResource DelaGothic}" FontSize="17" Foreground="#A6FFFFFF">
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:3.4" IterationCount="INFINITE" Delay="0:0:0.22">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="16%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#FFFFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="34%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    <TextBlock Text="こ" FontFamily="{StaticResource DelaGothic}" FontSize="17" Foreground="#A6FFFFFF">
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:3.4" IterationCount="INFINITE" Delay="0:0:0.44">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="16%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#FFFFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="34%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    <TextBlock Text="そ" FontFamily="{StaticResource DelaGothic}" FontSize="17" Foreground="#A6FFFFFF">
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:3.4" IterationCount="INFINITE" Delay="0:0:0.66">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="16%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#FFFFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="34%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Foreground">
+                                                <SolidColorBrush Color="#A6FFFFFF"/>
+                                            </Setter>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- reticle -->
+                <Canvas Width="93" Height="93" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,77,28,0">
+                    <Ellipse Width="90" Height="90" Canvas.Left="1.5" Canvas.Top="1.5"
+                             Stroke="#B3FFFFFF" StrokeThickness="1" StrokeDashArray="2.5,6">
+                        <Ellipse.RenderTransform>
+                            <RotateTransform/>
+                        </Ellipse.RenderTransform>
+                        <Ellipse.Styles>
+                            <Style Selector="Ellipse">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:40" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="(RotateTransform.Angle)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="(RotateTransform.Angle)" Value="360"/>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </Ellipse.Styles>
+                    </Ellipse>
+                    <Ellipse Width="70" Height="70" Canvas.Left="11.5" Canvas.Top="11.5"
+                             Stroke="#D9FFFFFF" StrokeThickness="1.7" StrokeDashArray="33,13,5,13">
+                        <Ellipse.RenderTransform>
+                            <RotateTransform/>
+                        </Ellipse.RenderTransform>
+                        <Ellipse.Styles>
+                            <Style Selector="Ellipse">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:24" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="(RotateTransform.Angle)" Value="360"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="(RotateTransform.Angle)" Value="0"/>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </Ellipse.Styles>
+                    </Ellipse>
+                    <Rectangle Width="1.5" Height="15" Canvas.Left="45.75" Canvas.Top="0" Fill="White"/>
+                    <Rectangle Width="1.5" Height="15" Canvas.Left="45.75" Canvas.Top="78" Fill="White"/>
+                    <Rectangle Width="15" Height="1.5" Canvas.Left="0" Canvas.Top="45.75" Fill="White"/>
+                    <Rectangle Width="15" Height="1.5" Canvas.Left="78" Canvas.Top="45.75" Fill="White"/>
+                    <Ellipse Width="5" Height="5" Canvas.Left="44" Canvas.Top="44" Fill="White"/>
+                </Canvas>
+
+                <!-- launcher license card -->
+                <Border Width="158" Height="96" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,25,25"
+                        Background="#99000000" BorderBrush="#80FFFFFF" BorderThickness="1">
+                    <Border.Clip>
+                        <StreamGeometry>M0,0 H144 L158,14 V96 H0 Z</StreamGeometry>
+                    </Border.Clip>
+                    <StackPanel Margin="12,8,12,10">
+                        <TextBlock Text="LAUNCHER LICENSE" FontSize="8" LetterSpacing="2.7" Foreground="#A6FFFFFF"/>
+                        <TextBlock Text="UNVERIFIED" FontFamily="{StaticResource Unbounded}" FontWeight="ExtraBold" FontSize="15" LetterSpacing="1.4" Foreground="White" Margin="0,4,0,0" IsVisible="{Binding !Account.SignedIn}"/>
+                        <TextBlock Text="VERIFIED" FontFamily="{StaticResource Unbounded}" FontWeight="ExtraBold" FontSize="15" LetterSpacing="1.4" Foreground="White" Margin="0,4,0,0" IsVisible="{Binding Account.SignedIn}"/>
+                        <Border Height="13" Margin="0,7,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,50%" EndPoint="7.6%,50%" SpreadMethod="Repeat">
+                                    <GradientStop Color="#FFFFFFFF" Offset="0"/>
+                                    <GradientStop Color="#FFFFFFFF" Offset="0.17"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="0.17"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="0.33"/>
+                                    <GradientStop Color="#FFFFFFFF" Offset="0.33"/>
+                                    <GradientStop Color="#FFFFFFFF" Offset="0.42"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="0.42"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="0.67"/>
+                                    <GradientStop Color="#FFFFFFFF" Offset="0.67"/>
+                                    <GradientStop Color="#FFFFFFFF" Offset="0.92"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="0.92"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Styles>
+                                <Style Selector="Border">
+                                    <Style.Animations>
+                                        <Animation Duration="0:0:4" IterationCount="INFINITE">
+                                            <KeyFrame Cue="0%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="47%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="50%">
+                                                <Setter Property="Opacity" Value="0.35"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="53%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="100%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                            </KeyFrame>
+                                        </Animation>
+                                    </Style.Animations>
+                                </Style>
+                            </Border.Styles>
+                        </Border>
+                        <TextBlock Text="NO. 0000 0000" FontFamily="{StaticResource MajorMono}" FontSize="9" Foreground="#CCFFFFFF" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+        </Border>
+
+        <Grid>
+            <!-- header -->
+            <Grid Margin="20,14,20,0" VerticalAlignment="Top" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Viewbox Width="28" Height="28">
+                        <Canvas Width="34" Height="34">
+                            <Path Data="M17,2 L29,12 L17,32 L5,12 Z" Fill="White"/>
+                            <Path Data="M5,12 H29 M17,2 L12,12 L17,32 L22,12 Z" Stroke="Black" StrokeThickness="1.3"/>
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock Text="ONYX" FontFamily="{StaticResource Unbounded}" FontWeight="Black" FontSize="16" LetterSpacing="5.1" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                    <Border Margin="12,0,0,0" VerticalAlignment="Center" Background="White" Padding="13,3,13,3" RenderTransform="skewX(-18deg)">
+                        <TextBlock Text="{Binding GameVersion}" Foreground="Black" FontWeight="Bold" FontSize="11" LetterSpacing="0.9" RenderTransform="skewX(18deg)"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding LauncherVersion}" FontFamily="{StaticResource MajorMono}" FontSize="11" Foreground="#B3FFFFFF"
+                               VerticalAlignment="Center" Margin="0,0,10,0"
+                               controls:CustomToolTip.Content="Your Minecraft version is unsupported by Flarial"/>
+                    <Border Background="#8C000000" BorderBrush="#59FFFFFF" BorderThickness="1" CornerRadius="4" Padding="5,4,13,4">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto">
+                            <Border Grid.Column="0" Width="26" Height="26" CornerRadius="3">
+                                <Border.Background>
+                                    <ImageBrush Source="{Binding Account.Avatar}" Stretch="UniformToFill"/>
+                                </Border.Background>
+                            </Border>
+                            <TextBlock Grid.Column="1" Text="{Binding Account.Username, Converter={x:Static converters:UpperCaseConverter.Instance}}" FontWeight="Bold" FontSize="12" LetterSpacing="1.7"
+                                       Foreground="{StaticResource ForegroundColor}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                            <Border Grid.Column="2" BorderThickness="1" CornerRadius="3" VerticalAlignment="Center"
+                                    Background="{Binding Account.Entitlement.Background}"
+                                    BorderBrush="{Binding Account.Entitlement.Border}"
+                                    Padding="6,2,6,2" Margin="8,0,0,0">
+                                <TextBlock Text="{Binding Account.Entitlement.Name}" FontSize="11"
+                                           Foreground="{StaticResource ForegroundColor}"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <Button x:Name="MinimizeButton" Classes="MinimizeButton" Margin="10,0,0,0" Command="{Binding MinimizeWindow}"/>
+                    <Button x:Name="CloseButton" Classes="CloseButton" Command="{Binding CloseWindow}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- main block -->
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="63,140,0,0" Width="367">
+                <Border BorderBrush="#B3FFFFFF" BorderThickness="1" Background="#80000000" Padding="10,4,12,4" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="6" Height="6" Fill="White" VerticalAlignment="Center">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform/>
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Styles>
+                                <Style Selector="Ellipse">
+                                    <Style.Animations>
+                                        <Animation Duration="0:0:2" IterationCount="INFINITE">
+                                            <KeyFrame Cue="0%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Setter Property="(ScaleTransform.ScaleX)" Value="1"/>
+                                                <Setter Property="(ScaleTransform.ScaleY)" Value="1"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="50%">
+                                                <Setter Property="Opacity" Value="0.35"/>
+                                                <Setter Property="(ScaleTransform.ScaleX)" Value="1.6"/>
+                                                <Setter Property="(ScaleTransform.ScaleY)" Value="1.6"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="100%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Setter Property="(ScaleTransform.ScaleX)" Value="1"/>
+                                                <Setter Property="(ScaleTransform.ScaleY)" Value="1"/>
+                                            </KeyFrame>
+                                        </Animation>
+                                    </Style.Animations>
+                                </Style>
+                            </Ellipse.Styles>
+                        </Ellipse>
+                        <TextBlock Text="{Binding LauncherStatus}" FontSize="10" FontWeight="SemiBold" LetterSpacing="3" Foreground="White" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Grid Margin="0,12,0,0" HorizontalAlignment="Left">
+                    <Border>
+                        <Border.Clip>
+                            <RectangleGeometry Rect="0,10,460,17"/>
+                        </Border.Clip>
+                        <TextBlock Text="WELCOME!" FontFamily="{StaticResource Unbounded}" FontWeight="Black" FontSize="50" LetterSpacing="-1.5" Foreground="White" Opacity="0">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform/>
+                        </TextBlock.RenderTransform>
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:2.6" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="38%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="39%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="10"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="42%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-7"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="45%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="12"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="48%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="78%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="79%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-15"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="82%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="10"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="85%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-8"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="88%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="13"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="91%">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-6"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="94%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    </Border>
+                    <Border>
+                        <Border.Clip>
+                            <RectangleGeometry Rect="0,36,460,17"/>
+                        </Border.Clip>
+                        <TextBlock Text="WELCOME!" FontFamily="{StaticResource Unbounded}" FontWeight="Black" FontSize="50" LetterSpacing="-1.5" Foreground="White" Opacity="0">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform/>
+                        </TextBlock.RenderTransform>
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:2.6" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="39%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="40%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="14"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="43%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-11"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="46%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="8"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="49%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-12"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="51%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="79%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="80%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="16"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="83%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-12"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="86%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="9"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="89%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="-14"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="92%">
+                                            <Setter Property="Opacity" Value="0.85"/>
+                                            <Setter Property="(TranslateTransform.X)" Value="5"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="95%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="Opacity" Value="0"/>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    </Border>
+                    <TextBlock Text="WELCOME!" FontFamily="{StaticResource Unbounded}" FontWeight="Black" FontSize="50" LetterSpacing="-1.5" Foreground="White">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform/>
+                        </TextBlock.RenderTransform>
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:2.6" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="(TranslateTransform.X)" Value="0"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="38%">
+                                            <Setter Property="(TranslateTransform.X)" Value="0"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="40%">
+                                            <Setter Property="(TranslateTransform.X)" Value="4"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="43%">
+                                            <Setter Property="(TranslateTransform.X)" Value="-4"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="1"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="46%">
+                                            <Setter Property="(TranslateTransform.X)" Value="3"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="-1"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="48%">
+                                            <Setter Property="(TranslateTransform.X)" Value="0"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="78%">
+                                            <Setter Property="(TranslateTransform.X)" Value="0"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="80%">
+                                            <Setter Property="(TranslateTransform.X)" Value="-5"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="83%">
+                                            <Setter Property="(TranslateTransform.X)" Value="5"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="1"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="86%">
+                                            <Setter Property="(TranslateTransform.X)" Value="-3"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="-1"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="89%">
+                                            <Setter Property="(TranslateTransform.X)" Value="4"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="92%">
+                                            <Setter Property="(TranslateTransform.X)" Value="0"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="(TranslateTransform.X)" Value="0"/>
+                                            <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                </Grid>
+
+                <Border Height="3" Margin="0,17,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                            <GradientStop Color="#FFFFFFFF" Offset="0"/>
+                            <GradientStop Color="#FFFFFFFF" Offset="0.55"/>
+                            <GradientStop Color="#00FFFFFF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <Grid Name="LaunchWrap" Margin="0,25,0,0" HorizontalAlignment="Left">
+                    <Path Name="LaunchGlow" Width="333" Height="55" Stretch="Fill" Fill="White" IsHitTestVisible="False"
+                          Data="M13,0 H333 L320,55 H0 Z"
+                          Classes.launching="{Binding IsLaunching}">
+                        <Path.Effect>
+                            <BlurEffect Radius="12"/>
+                        </Path.Effect>
+                    </Path>
+                    <Button Name="LaunchButton" Classes="LaunchButton" Classes.launching="{Binding IsLaunching}" HorizontalAlignment="Left"
+                            Command="{Binding Launch}"/>
+                </Grid>
+                <Button Name="SettingsButton" Classes="SettingsButton" Margin="0,10,0,0" HorizontalAlignment="Left"
+                        Command="{Binding NavigateCommand}" CommandParameter="{x:Static types:PageTransitions.SettingsPage}"/>
+            </StackPanel>
+
+        </Grid>
+
+        <!-- launching overlay: a dark disc bursts out of the launch button, then the ring fades in -->
+        <!-- The show class is latched from code-behind: it may only appear after a real
+             Launch press, never from the boot-time IsLaunching=true during startup. -->
+        <Border Name="LaunchingOverlay" CornerRadius="25" Background="Transparent">
+            <Border.Styles>
+                <Style Selector="Border#LaunchingOverlay">
+                    <Setter Property="IsHitTestVisible" Value="False"/>
+                </Style>
+                <Style Selector="Border#LaunchingOverlay.show">
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </Style>
+                <Style Selector="Border#LaunchingOverlay Ellipse#RevealDisc">
+                    <Setter Property="Opacity" Value="0"/>
+                    <Setter Property="Fill" Value="White"/>
+                    <Setter Property="RenderTransform" Value="scale(0.01)"/>
+                </Style>
+                <Style Selector="Border#LaunchingOverlay.show Ellipse#RevealDisc">
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="Fill" Value="#E6040404"/>
+                    <Setter Property="RenderTransform" Value="scale(1)"/>
+                </Style>
+                <Style Selector="Border#LaunchingOverlay Grid#LaunchContent">
+                    <Setter Property="Opacity" Value="0"/>
+                    <Setter Property="RenderTransform" Value="scale(0.45)"/>
+                </Style>
+                <Style Selector="Border#LaunchingOverlay.show Grid#LaunchContent">
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="RenderTransform" Value="scale(1)"/>
+                </Style>
+            </Border.Styles>
+            <Grid>
+                <Canvas IsHitTestVisible="False">
+                    <Ellipse Name="RevealDisc" Width="1500" Height="1500" Canvas.Left="-521" Canvas.Top="-384">
+                        <Ellipse.Transitions>
+                            <Transitions>
+                                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.8" Easing="CubicEaseOut"/>
+                                <BrushTransition Property="Fill" Duration="0:0:1"/>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.22"/>
+                            </Transitions>
+                        </Ellipse.Transitions>
+                    </Ellipse>
+                </Canvas>
+            <Grid Name="LaunchContent" Width="190" Height="190" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.Resources>
+                    <ConicGradientBrush x:Key="CometBrush" Center="50%,50%">
+                        <GradientStop Offset="0" Color="#00FFFFFF"/>
+                        <GradientStop Offset="0.12" Color="#00FFFFFF"/>
+                        <GradientStop Offset="1" Color="#FFFFFFFF"/>
+                    </ConicGradientBrush>
+                </Grid.Resources>
+                <Grid.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+                        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.6" Easing="CubicEaseOut"/>
+                    </Transitions>
+                </Grid.Transitions>
+                <Ellipse Width="190" Height="190" Stroke="#1AFFFFFF" StrokeThickness="13"/>
+                <Grid Name="CometSpin" Width="190" Height="190">
+                    <Grid.RenderTransform>
+                        <RotateTransform/>
+                    </Grid.RenderTransform>
+                    <Grid.Styles>
+                        <Style Selector="Grid#CometSpin">
+                            <Style.Animations>
+                                <Animation Duration="0:0:1.1" IterationCount="INFINITE">
+                                    <KeyFrame Cue="0%">
+                                        <Setter Property="(RotateTransform.Angle)" Value="0"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="100%">
+                                        <Setter Property="(RotateTransform.Angle)" Value="360"/>
+                                    </KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </Grid.Styles>
+                    <Ellipse Width="190" Height="190" StrokeThickness="13" Opacity="0.55" Stroke="{StaticResource CometBrush}">
+                        <Ellipse.Effect>
+                            <BlurEffect Radius="10"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+                    <Ellipse Width="190" Height="190" StrokeThickness="13" Stroke="{StaticResource CometBrush}"/>
+                </Grid>
+                <Ellipse Width="144" Height="144" HorizontalAlignment="Center" VerticalAlignment="Center"
+                         Stroke="#8CFFFFFF" StrokeThickness="1.5" StrokeDashArray="3,9">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform/>
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Styles>
+                        <Style Selector="Ellipse">
+                            <Style.Animations>
+                                <Animation Duration="0:0:6" IterationCount="INFINITE">
+                                    <KeyFrame Cue="0%">
+                                        <Setter Property="(RotateTransform.Angle)" Value="360"/>
+                                    </KeyFrame>
+                                    <KeyFrame Cue="100%">
+                                        <Setter Property="(RotateTransform.Angle)" Value="0"/>
+                                    </KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </Ellipse.Styles>
+                </Ellipse>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="LAUNCHING" FontFamily="{StaticResource Unbounded}" FontWeight="ExtraBold" FontSize="12.5" LetterSpacing="2.75" Foreground="White" HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0" Spacing="8">
+                        <Ellipse Width="6" Height="6" Fill="White">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform/>
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Styles>
+                                <Style Selector="Ellipse">
+                                    <Style.Animations>
+                                        <Animation Duration="0:0:0.9" IterationCount="INFINITE">
+                                            <KeyFrame Cue="0%">
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="50%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="-8"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="100%">
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                            </KeyFrame>
+                                        </Animation>
+                                    </Style.Animations>
+                                </Style>
+                            </Ellipse.Styles>
+                        </Ellipse>
+                        <Ellipse Width="6" Height="6" Fill="White">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform/>
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Styles>
+                                <Style Selector="Ellipse">
+                                    <Style.Animations>
+                                        <Animation Duration="0:0:0.9" IterationCount="INFINITE" Delay="0:0:0.15">
+                                            <KeyFrame Cue="0%">
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="50%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="-8"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="100%">
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                            </KeyFrame>
+                                        </Animation>
+                                    </Style.Animations>
+                                </Style>
+                            </Ellipse.Styles>
+                        </Ellipse>
+                        <Ellipse Width="6" Height="6" Fill="White">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform/>
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Styles>
+                                <Style Selector="Ellipse">
+                                    <Style.Animations>
+                                        <Animation Duration="0:0:0.9" IterationCount="INFINITE" Delay="0:0:0.3">
+                                            <KeyFrame Cue="0%">
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="50%">
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="-8"/>
+                                            </KeyFrame>
+                                            <KeyFrame Cue="100%">
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                                <Setter Property="(TranslateTransform.Y)" Value="0"/>
+                                            </KeyFrame>
+                                        </Animation>
+                                    </Style.Animations>
+                                </Style>
+                            </Ellipse.Styles>
+                        </Ellipse>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
