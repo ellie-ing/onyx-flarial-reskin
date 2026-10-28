@@ -1,0 +1,122 @@
+name: Workflow
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      PRIVATE_CERTIFICATE_BASE64: ${{ secrets.PRIVATE_CERTIFICATE_BASE64 }}
+      PRIVATE_CERTIFICATE_PASSWORD: ${{ secrets.PRIVATE_CERTIFICATE_PASSWORD }}
+
+      CERTIFICATE_BASE64: ${{ vars.CERTIFICATE_BASE64 }}
+      CERTIFICATE_FINGERPRINT: ${{ vars.CERTIFICATE_FINGERPRINT }}
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Verify
+        shell: pwsh
+        run: |
+          $Message = "${{ github.event.head_commit.message }}"
+          
+          if ($Message -notlike 'release:*') 
+          { 
+              Write-Host "Not a release commit, cancelling."
+              gh run cancel "${{ github.run_id }}"
+              gh run watch "${{ github.run_id }}"
+              exit 0 
+          }
+
+          Write-Host "A release commit, proceeding."
+
+      - name: .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: latest
+        
+      - name: Bump
+        shell: pwsh
+        run: |
+          Write-Host "Bumping package version with build date."
+
+          $Path = "$(Get-Location)\src\Flarial.Launcher\Package.appxmanifest"
+
+          $Date = Get-Date -AsUTC -Format "yyyy.MM.dd.HHmm"
+          $Version = [version]::new($Date).ToString()
+
+          [xml]$Manifest = Get-Content "$Path"
+          $Manifest.Package.Identity.Version = "$Version"
+          $Manifest.Save("$Path")
+
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@example.com"
+
+          git add "$Path"
+          git commit -m "Version -> '$Version'"
+          git push
+
+      - name: Build
+        shell: pwsh
+        run: |
+          dotnet publish "src\Flarial.Launcher\Flarial.Launcher.csproj"
+
+      - name: Sign
+        shell: pwsh
+        run: |
+          $Path = "$(Get-Location)\Flarial.Launcher.pfx"
+          $Bytes = [System.Convert]::FromBase64String($ENV:PRIVATE_CERTIFICATE_BASE64)
+          [System.IO.File]::WriteAllBytes($Path, $Bytes)
+
+          Write-Host "Signing the launcher's MSIX package."
+
+          dotnet tool install --tool-path . --prerelease sign
+          ./sign.exe code certificate-store -cf "$Path" -p "$ENV:PRIVATE_CERTIFICATE_PASSWORD" -cfp "$ENV:CERTIFICATE_FINGERPRINT" "src\Flarial.Launcher\AppPackages\Flarial.Launcher_Test\Flarial.Launcher.msix" -o "Flarial.Launcher.msix"
+
+      - name: Token
+        uses: actions/create-github-app-token@v3
+        id: token
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: flarialmc
+          repositories: newcdn
+
+      - name: CDN
+        uses: actions/checkout@v7
+        with:
+          repository: 'flarialmc/newcdn'
+          ref: 'main'
+          path: 'cdn'
+          token: ${{ steps.token.outputs.token }}
+
+      - name: Deploy
+        shell: pwsh
+        run: |
+          $LauncherVersion = "$(Get-Location)\Flarial.Launcher.json"
+          $LauncherPackage = "$(Get-Location)\Flarial.Launcher.msix"
+          $LauncherCertificate = "$(Get-Location)\Flarial.Launcher.cer"
+
+          $LauncherCertificateBytes = [System.Convert]::FromBase64String($ENV:CERTIFICATE_BASE64)
+          [System.IO.File]::WriteAllBytes($LauncherCertificate, $LauncherCertificateBytes)
+
+          $PackageManifest = "$(Get-Location)\src\Flarial.Launcher\Package.appxmanifest"
+          $PackageVersion = ([xml](Get-Content "$PackageManifest")).Package.Identity.Version
+          "`"$PackageVersion`"" | Set-Content -Path "$LauncherVersion"
+
+          Set-Location "cdn"
+
+          Move-Item "$LauncherVersion" "launcher\Flarial.Launcher.json" -Force
+          Move-Item "$LauncherPackage" "launcher\Flarial.Launcher.msix" -Force
+          Move-Item "$LauncherCertificate" "launcher\Flarial.Launcher.cer" -Force
+
+          git add "launcher\Flarial.Launcher.cer"
+          git add "launcher\Flarial.Launcher.json"
+          git add "launcher\Flarial.Launcher.msix"
+
+          git commit -m "Update Launcher Package -> '$PackageVersion'"
+          git push
