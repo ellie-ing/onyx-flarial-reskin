@@ -1,0 +1,116 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ONYX page swap: the two wipe slabs (PageWipe* below) sweep across and cover the
+         window around the 45-55% mark; the pages themselves simply swap while covered. -->
+
+    <Animation x:Key="HomePageEnterTransition" Duration="0:0:0.900" x:SetterTargetType="UserControl" FillMode="Forward" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+            <Setter Property="UserControl.IsVisible" Value="False"/>
+            <Setter Property="ScaleTransform.ScaleX" Value="1"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="1"/>
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+            <Setter Property="UserControl.Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="49%">
+            <Setter Property="UserControl.IsVisible" Value="False"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+            <Setter Property="UserControl.IsVisible" Value="True"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="UserControl.IsVisible" Value="True"/>
+            <Setter Property="ScaleTransform.ScaleX" Value="1"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="1"/>
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+        </KeyFrame>
+    </Animation>
+
+    <Animation x:Key="HomePageLeaveTransition" Duration="0:0:0.900" x:SetterTargetType="UserControl" FillMode="Forward" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+            <Setter Property="UserControl.IsVisible" Value="True"/>
+            <Setter Property="ScaleTransform.ScaleX" Value="1"/>
+            <Setter Property="ScaleTransform.ScaleY" Value="1"/>
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="49%">
+            <Setter Property="UserControl.IsVisible" Value="True"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+            <Setter Property="UserControl.IsVisible" Value="False"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="UserControl.IsVisible" Value="False"/>
+        </KeyFrame>
+    </Animation>
+
+    <Animation x:Key="SettingsPageEnterTransition" Duration="0:0:0.900" x:SetterTargetType="UserControl" FillMode="Forward" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+            <Setter Property="UserControl.IsHitTestVisible" Value="False"/>
+            <Setter Property="UserControl.Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="49%">
+            <Setter Property="UserControl.Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+            <Setter Property="UserControl.Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+            <Setter Property="UserControl.Opacity" Value="1"/>
+            <Setter Property="UserControl.IsHitTestVisible" Value="True"/>
+        </KeyFrame>
+    </Animation>
+
+    <Animation x:Key="SettingsPageLeaveTransition" Duration="0:0:0.900" x:SetterTargetType="UserControl" FillMode="Forward" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+            <Setter Property="UserControl.IsHitTestVisible" Value="False"/>
+            <Setter Property="UserControl.Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="49%">
+            <Setter Property="UserControl.Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+            <Setter Property="UserControl.Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.Y" Value="0"/>
+            <Setter Property="UserControl.IsHitTestVisible" Value="False"/>
+            <Setter Property="UserControl.Opacity" Value="0"/>
+        </KeyFrame>
+    </Animation>
+
+    <!-- The wipe slabs: a white flash leads, the dark slab (delayed) covers for the swap,
+         then both exit left. Parked off-screen right (+1150) whenever no animation runs. -->
+    <Animation x:Key="PageWipeWhiteTransition" Duration="0:0:0.900" x:SetterTargetType="Border" FillMode="Forward" Easing="CubicEaseInOut">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="1150"/>
+        </KeyFrame>
+        <KeyFrame Cue="45%">
+            <Setter Property="TranslateTransform.X" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="55%">
+            <Setter Property="TranslateTransform.X" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="-1150"/>
+        </KeyFrame>
+    </Animation>
+
+    <Animation x:Key="PageWipeDarkTransition" Duration="0:0:0.900" Delay="0:0:0.08" x:SetterTargetType="Border" FillMode="Forward" Easing="CubicEaseInOut">
+        <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="1150"/>
+        </KeyFrame>
+        <KeyFrame Cue="45%">
+            <Setter Property="TranslateTransform.X" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="55%">
+            <Setter Property="TranslateTransform.X" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="-1150"/>
+        </KeyFrame>
+    </Animation>
+</ResourceDictionary>
